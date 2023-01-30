@@ -3,14 +3,24 @@ import React, {useCallback, useMemo, useState} from "react";
 import _ from "lodash";
 import {SurfaceFactory} from "./Surface";
 import {TokenFactory} from "./Token";
+import {useEditorMode} from "../Contexts/EditorModeContext";
+import {EditorMode} from "../EditorMode";
+import {BoardObjectsMouseEventsType} from "../types";
 
-type boardType = {
+type BoardType = {
 	resolution?: number,
 }
 
-const Board = ({resolution = 50}: boardType) => {
+type GenericPreviewItemData = {
+	[key: string]: string,
+	type: string,
+}
+
+const Board = ({resolution = 50}: BoardType) => {
+	const editorMode: EditorMode = useEditorMode();
+
 	const [boardItems, setBoardItems] = useState<JSX.Element[]>([]);
-	const [previewBoardItemData, setPreviewBoardItemData] = useState<({ type: any, [key: string]: string }) | undefined>();
+	const [previewBoardItemData, setPreviewBoardItemData] = useState<GenericPreviewItemData | undefined>();
 
 	const onCreateBoardItem = useCallback(
 		(newBoardItem: JSX.Element) => {
@@ -38,6 +48,12 @@ const Board = ({resolution = 50}: boardType) => {
 		[onCreateBoardItem, setPreviewBoardItemData]
 	);
 
+	const editorModeToEvents: Record<EditorMode, BoardObjectsMouseEventsType> = useMemo(() => ({
+		[EditorMode.MOVE]: {onMouseDown: () => {}, onMouseMove: () => {}, onMouseUp: () => {}},
+		[EditorMode.SURFACE]: surfaceMouseEvents,
+		[EditorMode.TOKEN]: tokenMouseEvents,
+	}), [surfaceMouseEvents, tokenMouseEvents]);
+
 	const backgroundDots = useMemo(() => {
 		const dots = [];
 		for (let x = 0; x < window.innerWidth; x += resolution) {
@@ -52,9 +68,9 @@ const Board = ({resolution = 50}: boardType) => {
 		<Stage
 			width={window.innerWidth}
 			height={window.innerHeight}
-			onMouseDown={(e) => tokenMouseEvents.onMouseDown(e)}
-			onMouseMove={(e) => tokenMouseEvents.onMouseMove(e)}
-			onMouseUp={(e) => tokenMouseEvents.onMouseUp(e)}
+			onMouseDown={(e) => editorModeToEvents[editorMode].onMouseDown(e)}
+			onMouseMove={(e) => editorModeToEvents[editorMode].onMouseMove(e)}
+			onMouseUp={(e) => editorModeToEvents[editorMode].onMouseUp(e)}
 		>
 			<Layer name={"background"}>
 				{

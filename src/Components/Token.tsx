@@ -62,7 +62,7 @@ export const TokenFactory: TokenFactoryType = (onCreateSurface, updatePreviewSur
 
 const Token = ({x, y, radius}: CircleConfig) => {
 	return (
-		<Circle x={x} y={y} radius={radius} fill={"grey"}/>
+		<Circle x={x} y={y} radius={radius} fill={"grey"} draggable/>
 	);
 };
 
