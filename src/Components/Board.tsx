@@ -1,24 +1,22 @@
 import {Circle, Layer} from "react-konva";
-import React, {useEffect, useState} from "react";
+import React, {useMemo} from "react";
 import _ from "lodash";
-import Konva from "konva";
 
 type boardType = {
-	surfaces: JSX.Element[],
-	previewSurface: JSX.Element | undefined,
+	boardItems: JSX.Element[],
+	previewBoardItems: JSX.Element | undefined,
 	resolution?: number,
 }
 
-const Board = ({ surfaces, previewSurface, resolution = 50 }: boardType) => {
-	const [backgroundDots, setBackgroundDots] = useState<{x: number, y: number}[]>([]);
-	useEffect(() => {
+const Board = ({ boardItems, previewBoardItems, resolution = 50 }: boardType) => {
+	const backgroundDots = useMemo(() => {
 		const dots = [];
 		for (let x = 0; x < window.innerWidth; x += resolution) {
 			for (let y = 0; y < window.innerWidth; y += resolution) {
 				dots.push({x: x, y: y});
 			}
 		}
-		setBackgroundDots(dots);
+		return dots;
 	}, [resolution, window.innerWidth, window.innerHeight]);
 
 	return (
@@ -31,11 +29,11 @@ const Board = ({ surfaces, previewSurface, resolution = 50 }: boardType) => {
 					)
 				}
 			</Layer>
-			<Layer name={"objects"}>
-				{surfaces}
+			<Layer name={"board-items"}>
+				{boardItems}
 			</Layer>
-			<Layer name={"preview-objects"}>
-				{previewSurface}
+			<Layer name={"preview-board-items"}>
+				{previewBoardItems}
 			</Layer>
 		</>
 	);

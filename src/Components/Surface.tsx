@@ -2,17 +2,13 @@ import {Rect} from "react-konva";
 import Konva from "konva";
 import _ from "lodash";
 import RectConfig = Konva.RectConfig;
+import {BoardObjectsMouseEventsType} from "../types";
 
 type SurfaceFactoryType = (
 	onCreateSurface: (el: JSX.Element) => void,
 	updatePreviewSurfaceData: (el: {type: any} & RectConfig) => void
-) => [
-	{
-		onMouseDown: (e: Konva.KonvaEventObject<MouseEvent>) => void,
-		onMouseMove: (e: Konva.KonvaEventObject<MouseEvent>) => void,
-		onMouseUp: (e: Konva.KonvaEventObject<MouseEvent>) => void,
-	},
-]
+) => BoardObjectsMouseEventsType
+
 
 export const SurfaceFactory: SurfaceFactoryType = (onCreateSurface, updatePreviewSurfaceData) => {
 	let isMouseDown = false;
@@ -21,11 +17,15 @@ export const SurfaceFactory: SurfaceFactoryType = (onCreateSurface, updatePrevie
 
 	const resolution = 50;
 
+	const _getObjectData = () => ({
+		x: firstCreatePosition.x,
+		y: firstCreatePosition.y,
+		width: secondCreatePosition.x - firstCreatePosition.x,
+		height: secondCreatePosition.y - firstCreatePosition.y,
+	});
+
 	const getSurface = () => <Surface
-		x={firstCreatePosition.x}
-		y={firstCreatePosition.y}
-		width={secondCreatePosition.x - firstCreatePosition.x}
-		height={secondCreatePosition.y - firstCreatePosition.y}
+		{..._getObjectData()}
 	/>
 
 	const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>): void => {
@@ -43,11 +43,8 @@ export const SurfaceFactory: SurfaceFactoryType = (onCreateSurface, updatePrevie
 		};
 		if (isMouseDown) {
 			updatePreviewSurfaceData({
-				x: firstCreatePosition.x,
-				y: firstCreatePosition.y,
-				width: secondCreatePosition.x - firstCreatePosition.x,
-				height: secondCreatePosition.y - firstCreatePosition.y,
-				type: Surface
+				type: Surface,
+				..._getObjectData(),
 			});
 		}
 	};
@@ -57,23 +54,15 @@ export const SurfaceFactory: SurfaceFactoryType = (onCreateSurface, updatePrevie
 		isMouseDown = false;
 	};
 
-	return [
-		{
-			onMouseDown: onMouseDown,
-			onMouseMove: onMouseMove,
-			onMouseUp: onMouseUp,
-		},
-	]
+	return {
+		onMouseDown: onMouseDown,
+		onMouseMove: onMouseMove,
+		onMouseUp: onMouseUp,
+	}
 };
 
-type SurfaceType = {
-	x: number,
-	y: number,
-	width: number,
-	height: number,
-}
 
-const Surface = ({x, y, width, height}: SurfaceType) => {
+const Surface = ({x, y, width, height}: RectConfig) => {
 	return (
 		<Rect x={x} y={y} width={width} height={height} fill={"grey"}/>
 	);

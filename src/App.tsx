@@ -4,6 +4,7 @@ import Board from "./Components/Board";
 import {Stage} from "react-konva";
 import {SurfaceFactory} from "./Components/Surface";
 import _ from "lodash";
+import {TokenFactory} from "./Components/Token";
 
 
 type CreationOption = "Token" | "Surface";
@@ -13,27 +14,33 @@ const App = () => {
 
 	const [selectedOption, setSelectedOption] = useState<CreationOption>("Surface");
 
+	const [boardItems, setBoardItems] = useState<JSX.Element[]>([]);
 	const [previewCreation, setPreviewCreation] = useState<({type: any, [key: string]: string}) | undefined>();
-	const [surfaces, setSurfaces] = useState<JSX.Element[]>([]);
 
-	const onCreateSurface = useCallback(
-		(newSurface: JSX.Element) => {
-			setSurfaces((current) => [...current, newSurface]);
+	const onCreateBoardItem = useCallback(
+		(newBoardItem: JSX.Element) => {
+			setBoardItems((current) => [...current, newBoardItem]);
 		},
-		[setSurfaces]
+		[setBoardItems]
 	);
 
-	const previewCreationObject = useMemo(() =>
+	const creationPreviewInstance = useMemo(() =>
 		previewCreation ?
 			<previewCreation.type {..._.omit(previewCreation, ["type"])}/> :
 			undefined,
 		[previewCreation]
 	);
 
-	const [mouseEvents] = useMemo(() => SurfaceFactory(
-		onCreateSurface,
+	const surfaceMouseEvents = useMemo(() => SurfaceFactory(
+		onCreateBoardItem,
 		(e) => setPreviewCreation(e)),
-		[onCreateSurface, setPreviewCreation]
+		[onCreateBoardItem, setPreviewCreation]
+	);
+
+	const tokenMouseEvents = useMemo(() => TokenFactory(
+		onCreateBoardItem,
+		(e) => setPreviewCreation(e)),
+		[onCreateBoardItem, setPreviewCreation]
 	);
 
 	return (
@@ -41,13 +48,13 @@ const App = () => {
 			<Stage
 				width={window.innerWidth}
 				height={window.innerHeight}
-				onMouseDown={(e) => mouseEvents.onMouseDown(e)}
-				onMouseMove={(e) => mouseEvents.onMouseMove(e)}
-				onMouseUp={(e) => mouseEvents.onMouseUp(e)}
+				onMouseDown={(e) => tokenMouseEvents.onMouseDown(e)}
+				onMouseMove={(e) => tokenMouseEvents.onMouseMove(e)}
+				onMouseUp={(e) => tokenMouseEvents.onMouseUp(e)}
 			>
 				<Board
-					surfaces={surfaces}
-					previewSurface={previewCreationObject}
+					boardItems={boardItems}
+					previewBoardItems={creationPreviewInstance}
 					resolution={resolution}
 				/>
 			</Stage>
