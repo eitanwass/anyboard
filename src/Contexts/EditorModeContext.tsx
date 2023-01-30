@@ -1,10 +1,17 @@
-import {createContext, useContext, useState, ReactNode} from "react";
-import {EditorMode} from "../EditorMode";
+import React from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
+import { EditorMode } from "../EditorMode";
 
 const EditorModeContext = createContext<EditorMode>(EditorMode.MOVE);
 
-export const EditorModeContextProvider = ({children}: {children: ReactNode}) => {
-	const [selectedOption, setSelectedOption] = useState<EditorMode>(EditorMode.SURFACE);
+export const EditorModeContextProvider = ({
+	children,
+}: {
+	children: ReactNode;
+}) => {
+	const [selectedOption, setSelectedOption] = useState<EditorMode>(
+		EditorMode.SURFACE
+	);
 
 	return (
 		<EditorModeContext.Provider value={selectedOption}>
@@ -23,4 +30,4 @@ export const useEditorMode = () => {
 	}
 
 	return currentEditorModeContext;
-}
+};

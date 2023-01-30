@@ -1,9 +1,7 @@
-import React from 'react';
-import './App.sass';
+import React from "react";
+import "./App.sass";
 import Board from "./Components/Board";
-import {EditorModeContextProvider} from "./Contexts/EditorModeContext";
-
-
+import { EditorModeContextProvider } from "./Contexts/EditorModeContext";
 
 const App = () => {
 	const resolution = 50;
@@ -11,9 +9,7 @@ const App = () => {
 	return (
 		<div className="App">
 			<EditorModeContextProvider>
-				<Board
-					resolution={resolution}
-				/>
+				<Board resolution={resolution} />
 			</EditorModeContextProvider>
 		</div>
 	);

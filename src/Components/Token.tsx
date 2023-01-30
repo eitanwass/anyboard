@@ -1,19 +1,21 @@
-import {Circle} from "react-konva";
+import React from "react";
+import { Circle } from "react-konva";
 import Konva from "konva";
 import CircleConfig = Konva.CircleConfig;
-import {BoardObjectsMouseEventsType} from "../types";
+import { BoardObjectsMouseEventsType } from "../types";
 import _ from "lodash";
-
 
 type TokenFactoryType = (
 	onCreateSurface: (el: JSX.Element) => void,
-	updatePreviewSurfaceData: (el: {type: any} & CircleConfig) => void
-) => BoardObjectsMouseEventsType
+	updatePreviewSurfaceData: (el: { type: any } & CircleConfig) => void
+) => BoardObjectsMouseEventsType;
 
-
-export const TokenFactory: TokenFactoryType = (onCreateSurface, updatePreviewSurfaceData) => {
+export const TokenFactory: TokenFactoryType = (
+	onCreateSurface,
+	updatePreviewSurfaceData
+) => {
 	let isMouseDown = false;
-	let createPosition = {x: 0, y: 0};
+	let createPosition = { x: 0, y: 0 };
 
 	const resolution = 50;
 
@@ -23,9 +25,7 @@ export const TokenFactory: TokenFactoryType = (onCreateSurface, updatePreviewSur
 		radius: resolution / 2,
 	});
 
-	const getToken = () => <Token
-		{..._getObjectData()}
-	/>
+	const getToken = () => <Token {..._getObjectData()} />;
 
 	const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>): void => {
 		isMouseDown = true;
@@ -57,13 +57,11 @@ export const TokenFactory: TokenFactoryType = (onCreateSurface, updatePreviewSur
 		onMouseDown: onMouseDown,
 		onMouseMove: onMouseMove,
 		onMouseUp: onMouseUp,
-	}
+	};
 };
 
-const Token = ({x, y, radius}: CircleConfig) => {
-	return (
-		<Circle x={x} y={y} radius={radius} fill={"grey"} draggable/>
-	);
+const Token = ({ x, y, radius }: CircleConfig) => {
+	return <Circle x={x} y={y} radius={radius} fill={"grey"} draggable />;
 };
 
 export default Token;

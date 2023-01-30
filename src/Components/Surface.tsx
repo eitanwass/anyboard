@@ -1,19 +1,22 @@
-import {Rect} from "react-konva";
+import React from "react";
+import { Rect } from "react-konva";
 import Konva from "konva";
 import _ from "lodash";
 import RectConfig = Konva.RectConfig;
-import {BoardObjectsMouseEventsType} from "../types";
+import { BoardObjectsMouseEventsType } from "../types";
 
 type SurfaceFactoryType = (
 	onCreateSurface: (el: JSX.Element) => void,
-	updatePreviewSurfaceData: (el: {type: any} & RectConfig) => void
-) => BoardObjectsMouseEventsType
+	updatePreviewSurfaceData: (el: { type: any } & RectConfig) => void
+) => BoardObjectsMouseEventsType;
 
-
-export const SurfaceFactory: SurfaceFactoryType = (onCreateSurface, updatePreviewSurfaceData) => {
+export const SurfaceFactory: SurfaceFactoryType = (
+	onCreateSurface,
+	updatePreviewSurfaceData
+) => {
 	let isMouseDown = false;
-	let firstCreatePosition = {x: 0, y: 0};
-	let secondCreatePosition = {x: 0, y: 0};
+	let firstCreatePosition = { x: 0, y: 0 };
+	let secondCreatePosition = { x: 0, y: 0 };
 
 	const resolution = 50;
 
@@ -24,9 +27,7 @@ export const SurfaceFactory: SurfaceFactoryType = (onCreateSurface, updatePrevie
 		height: secondCreatePosition.y - firstCreatePosition.y,
 	});
 
-	const getSurface = () => <Surface
-		{..._getObjectData()}
-	/>
+	const getSurface = () => <Surface {..._getObjectData()} />;
 
 	const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>): void => {
 		isMouseDown = true;
@@ -58,14 +59,11 @@ export const SurfaceFactory: SurfaceFactoryType = (onCreateSurface, updatePrevie
 		onMouseDown: onMouseDown,
 		onMouseMove: onMouseMove,
 		onMouseUp: onMouseUp,
-	}
+	};
 };
 
-
-const Surface = ({x, y, width, height}: RectConfig) => {
-	return (
-		<Rect x={x} y={y} width={width} height={height} fill={"grey"}/>
-	);
+const Surface = ({ x, y, width, height }: RectConfig) => {
+	return <Rect x={x} y={y} width={width} height={height} fill={"grey"} />;
 };
 
 export default Surface;
