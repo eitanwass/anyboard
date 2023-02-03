@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.sass";
 import Board from "./Components/Board";
+import MetaActionsPanel from "./Components/MetaActionsPanel";
 import Toolbox from "./Components/Toolbox";
 import { EditorModeContextProvider } from "./Contexts/EditorModeContext";
 
@@ -13,7 +14,7 @@ const App = () => {
 			<EditorModeContextProvider>
 				<Board resolution={resolution} />
 			</EditorModeContextProvider>
-			{/* Insert user controls here (invites, new map, etc...) */}
+			<MetaActionsPanel />
 		</div>
 	);
 };
