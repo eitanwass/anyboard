@@ -1,14 +1,31 @@
-import { Circle, Layer, Stage } from "react-konva";
-import React, { useCallback, useMemo, useState } from "react";
+import {
+	Circle,
+	Group,
+	KonvaNodeComponent,
+	Layer,
+	Stage,
+	StageProps,
+} from "react-konva";
+import Konva from "konva";
+import React, {
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import _ from "lodash";
 import { SurfaceFactory } from "./Surface";
 import { TokenFactory } from "./Token";
 import { useEditorMode } from "../Contexts/EditorModeContext";
 import { EditorMode } from "../EditorMode";
 import { BoardObjectsMouseEventsType } from "../types";
+import { Vector2d } from "konva/lib/types";
+import { NodeConfig } from "konva/lib/Node";
+import { StageConfig } from "konva/lib/Stage";
 
 type BoardType = {
-	resolution?: number;
+	resolution: number;
 };
 
 type GenericPreviewItemData = {
@@ -16,8 +33,13 @@ type GenericPreviewItemData = {
 	type: string;
 };
 
-const Board = ({ resolution = 50 }: BoardType) => {
+Konva.dragButtons = [1];
+Konva.dragDistance = 1;
+
+const Board = ({ resolution }: BoardType) => {
 	const editorMode: EditorMode = useEditorMode();
+
+	const [stagePosition, setStagePosition] = useState<Vector2d>({ x: 0, y: 0 });
 
 	const [boardItems, setBoardItems] = useState<JSX.Element[]>([]);
 	const [previewBoardItemData, setPreviewBoardItemData] = useState<
@@ -54,11 +76,6 @@ const Board = ({ resolution = 50 }: BoardType) => {
 	const editorModeToEvents: Record<EditorMode, BoardObjectsMouseEventsType> =
 		useMemo(
 			() => ({
-				[EditorMode.MOVE]: {
-					onMouseDown: () => {},
-					onMouseMove: () => {},
-					onMouseUp: () => {},
-				},
 				[EditorMode.SURFACE]: surfaceMouseEvents,
 				[EditorMode.TOKEN]: tokenMouseEvents,
 			}),
@@ -67,27 +84,47 @@ const Board = ({ resolution = 50 }: BoardType) => {
 
 	const backgroundDots = useMemo(() => {
 		const dots = [];
-		for (let x = 0; x < window.innerWidth; x += resolution) {
-			for (let y = 0; y < window.innerWidth; y += resolution) {
-				dots.push({ x: x, y: y });
+		const dotRadius = 2;
+		const dotColor = "rgba(0, 0, 0, 0.2)";
+		const firstDot = {
+			x: Math.ceil(-stagePosition.x / resolution) * resolution,
+			y: Math.ceil(-stagePosition.y / resolution) * resolution,
+		};
+		const lastDot = {
+			x: firstDot.x + window.innerWidth,
+			y: firstDot.y + window.innerHeight,
+		};
+
+		for (let y = firstDot.y; y < lastDot.y; y += resolution) {
+			for (let x = firstDot.x; x < lastDot.x; x += resolution) {
+				dots.push(
+					<Circle
+						key={x + lastDot.x * y}
+						x={x}
+						y={y}
+						radius={dotRadius}
+						fill={dotColor}
+					/>
+				);
 			}
 		}
-		return dots;
-	}, [resolution, window.innerWidth, window.innerHeight]);
+		return <Group>{dots}</Group>;
+	}, [resolution, window.innerWidth, window.innerHeight, stagePosition]);
 
 	return (
 		<Stage
+			container={"board-container"}
 			width={window.innerWidth}
 			height={window.innerHeight}
-			onMouseDown={(e) => editorModeToEvents[editorMode].onMouseDown(e)}
-			onMouseMove={(e) => editorModeToEvents[editorMode].onMouseMove(e)}
-			onMouseUp={(e) => editorModeToEvents[editorMode].onMouseUp(e)}
+			// onMouseDown={(e) => editorModeToEvents[editorMode].onMouseDown(e)}
+			// onMouseMove={(e) => editorModeToEvents[editorMode].onMouseMove(e)}
+			// onMouseUp={(e) => editorModeToEvents[editorMode].onMouseUp(e)}
+			draggable
+			onDragMove={(e) => {
+				setStagePosition(e.currentTarget.absolutePosition());
+			}}
 		>
-			<Layer name={"background"}>
-				{_.map(backgroundDots, (dot) => (
-					<Circle x={dot.x} y={dot.y} width={2} height={2} fill={"black"} />
-				))}
-			</Layer>
+			<Layer name={"background"}>{backgroundDots}</Layer>
 			<Layer name={"board-items"}>{boardItems}</Layer>
 			<Layer name={"preview-board-items"}>{creationPreviewInstance}</Layer>
 		</Stage>

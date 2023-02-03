@@ -9,7 +9,9 @@ const App = () => {
 	return (
 		<div className="App">
 			<EditorModeContextProvider>
-				<Board resolution={resolution} />
+				<div id={"board-container"}>
+					<Board resolution={resolution} />
+				</div>
 			</EditorModeContextProvider>
 		</div>
 	);

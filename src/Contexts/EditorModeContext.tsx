@@ -2,7 +2,7 @@ import React from "react";
 import { createContext, useContext, useState, ReactNode } from "react";
 import { EditorMode } from "../EditorMode";
 
-const EditorModeContext = createContext<EditorMode>(EditorMode.MOVE);
+const EditorModeContext = createContext<EditorMode>(EditorMode.SURFACE);
 
 export const EditorModeContextProvider = ({
 	children,
