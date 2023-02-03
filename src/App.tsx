@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.sass";
 import Board from "./Components/Board";
+import Toolbox from "./Components/Toolbox";
 import { EditorModeContextProvider } from "./Contexts/EditorModeContext";
 
 const App = () => {
@@ -8,11 +9,11 @@ const App = () => {
 
 	return (
 		<div className="App">
+			<Toolbox />
 			<EditorModeContextProvider>
-				<div id={"board-container"}>
-					<Board resolution={resolution} />
-				</div>
+				<Board resolution={resolution} />
 			</EditorModeContextProvider>
+			{/* Insert user controls here (invites, new map, etc...) */}
 		</div>
 	);
 };
