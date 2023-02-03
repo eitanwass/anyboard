@@ -1,19 +1,6 @@
-import {
-	Circle,
-	Group,
-	KonvaNodeComponent,
-	Layer,
-	Stage,
-	StageProps,
-} from "react-konva";
+import { Circle, Layer, Stage } from "react-konva";
 import Konva from "konva";
-import React, {
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import _ from "lodash";
 import { SurfaceFactory } from "./Surface";
 import { TokenFactory } from "./Token";
@@ -21,8 +8,6 @@ import { useEditorMode } from "../Contexts/EditorModeContext";
 import { EditorMode } from "../EditorMode";
 import { BoardObjectsMouseEventsType } from "../types";
 import { Vector2d } from "konva/lib/types";
-import { NodeConfig } from "konva/lib/Node";
-import { StageConfig } from "konva/lib/Stage";
 
 type BoardType = {
 	resolution: number;
@@ -45,6 +30,12 @@ const Board = ({ resolution }: BoardType) => {
 	const [previewBoardItemData, setPreviewBoardItemData] = useState<
 		GenericPreviewItemData | undefined
 	>();
+
+	// useEffect(() => {
+	// 	window.addEventListener("scroll", (e) => {
+	// 		console.debug(e);
+	// 	});
+	// }, []);
 
 	const onCreateBoardItem = useCallback(
 		(newBoardItem: JSX.Element) => {
@@ -108,7 +99,7 @@ const Board = ({ resolution }: BoardType) => {
 				);
 			}
 		}
-		return <Group>{dots}</Group>;
+		return dots;
 	}, [resolution, window.innerWidth, window.innerHeight, stagePosition]);
 
 	return (
@@ -120,8 +111,19 @@ const Board = ({ resolution }: BoardType) => {
 			// onMouseMove={(e) => editorModeToEvents[editorMode].onMouseMove(e)}
 			// onMouseUp={(e) => editorModeToEvents[editorMode].onMouseUp(e)}
 			draggable
-			onDragMove={(e) => {
-				setStagePosition(e.currentTarget.absolutePosition());
+			onDragMove={({ currentTarget }) => {
+				setStagePosition(currentTarget.absolutePosition());
+			}}
+			onWheel={({ evt, currentTarget }) => {
+				const scrollSize = evt.deltaY / 4;
+				const delta = evt.shiftKey
+					? { x: scrollSize, y: 0 }
+					: { x: 0, y: scrollSize };
+				currentTarget.setAbsolutePosition({
+					x: currentTarget.absolutePosition().x - delta.x,
+					y: currentTarget.absolutePosition().y - delta.y,
+				});
+				setStagePosition(currentTarget.absolutePosition());
 			}}
 		>
 			<Layer name={"background"}>{backgroundDots}</Layer>
