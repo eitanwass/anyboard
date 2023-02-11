@@ -51,6 +51,7 @@ export const SurfaceFactory: SurfaceFactoryType = (
 	};
 
 	const onMouseUp = (e: Konva.KonvaEventObject<MouseEvent>): void => {
+		if (!isMouseDown) return;
 		onCreateSurface(getSurface());
 		isMouseDown = false;
 	};
@@ -63,7 +64,16 @@ export const SurfaceFactory: SurfaceFactoryType = (
 };
 
 const Surface = ({ x, y, width, height }: RectConfig) => {
-	return <Rect x={x} y={y} width={width} height={height} fill={"grey"} />;
+	return (
+		<Rect
+			key={`surface-${x},${y}-${width}/${height}`}
+			x={x}
+			y={y}
+			width={width}
+			height={height}
+			fill={"grey"}
+		/>
+	);
 };
 
 export default Surface;

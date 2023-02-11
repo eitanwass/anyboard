@@ -10,11 +10,13 @@ const App = () => {
 
 	return (
 		<div className="App">
-			<Toolbox />
 			<EditorModeContextProvider>
-				<Board resolution={resolution} />
+				<Toolbox />
+				<div className={"board-and-settings"}>
+					<Board resolution={resolution} />
+					<MetaActionsPanel />
+				</div>
 			</EditorModeContextProvider>
-			<MetaActionsPanel />
 		</div>
 	);
 };

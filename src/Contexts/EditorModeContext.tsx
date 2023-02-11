@@ -2,19 +2,33 @@ import React from "react";
 import { createContext, useContext, useState, ReactNode } from "react";
 import { EditorMode } from "../EditorMode";
 
-const EditorModeContext = createContext<EditorMode>(EditorMode.SURFACE);
+type EditorModeContextType = {
+	selectedEditorMode: EditorMode;
+	setSelectedEditorMode: React.Dispatch<React.SetStateAction<EditorMode>>;
+};
+
+const EditorModeContext = createContext<EditorModeContextType>({
+	selectedEditorMode: EditorMode.SURFACE,
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	setSelectedEditorMode: () => {},
+});
 
 export const EditorModeContextProvider = ({
 	children,
 }: {
 	children: ReactNode;
 }) => {
-	const [selectedOption, setSelectedOption] = useState<EditorMode>(
+	const [selectedEditorMode, setSelectedEditorMode] = useState<EditorMode>(
 		EditorMode.SURFACE
 	);
 
 	return (
-		<EditorModeContext.Provider value={selectedOption}>
+		<EditorModeContext.Provider
+			value={{
+				selectedEditorMode: selectedEditorMode,
+				setSelectedEditorMode: setSelectedEditorMode,
+			}}
+		>
 			{children}
 		</EditorModeContext.Provider>
 	);

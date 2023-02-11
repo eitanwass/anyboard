@@ -28,7 +28,7 @@ Konva.dragButtons = [1];
 Konva.dragDistance = 1;
 
 const Board = ({ resolution }: BoardType) => {
-	const editorMode: EditorMode = useEditorMode();
+	const { selectedEditorMode } = useEditorMode();
 
 	const stageContainerRef = useRef<HTMLDivElement>(null);
 
@@ -54,7 +54,7 @@ const Board = ({ resolution }: BoardType) => {
 				height: stageContainerRef.current.offsetHeight,
 			});
 		}
-	}, [stageContainerRef.current]);
+	}, [stageContainerRef.current, setStageDimensions]);
 
 	const onCreateBoardItem = useCallback(
 		(newBoardItem: JSX.Element) => {
@@ -124,11 +124,16 @@ const Board = ({ resolution }: BoardType) => {
 	return (
 		<div className={"stage-container"} ref={stageContainerRef}>
 			<Stage
+				container={".stage-container"}
 				width={stageDimensions.width}
 				height={stageDimensions.height}
-				// onMouseDown={(e) => editorModeToEvents[editorMode].onMouseDown(e)}
-				// onMouseMove={(e) => editorModeToEvents[editorMode].onMouseMove(e)}
-				// onMouseUp={(e) => editorModeToEvents[editorMode].onMouseUp(e)}
+				onMouseDown={(e) =>
+					editorModeToEvents[selectedEditorMode].onMouseDown(e)
+				}
+				onMouseMove={(e) =>
+					editorModeToEvents[selectedEditorMode].onMouseMove(e)
+				}
+				onMouseUp={(e) => editorModeToEvents[selectedEditorMode].onMouseUp(e)}
 				draggable
 				onDragMove={({ currentTarget }) => {
 					setStagePosition(currentTarget.absolutePosition());

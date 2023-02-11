@@ -49,6 +49,7 @@ export const TokenFactory: TokenFactoryType = (
 	};
 
 	const onMouseUp = (e: Konva.KonvaEventObject<MouseEvent>): void => {
+		if (!isMouseDown) return;
 		onCreateSurface(getToken());
 		isMouseDown = false;
 	};
@@ -61,7 +62,16 @@ export const TokenFactory: TokenFactoryType = (
 };
 
 const Token = ({ x, y, radius }: CircleConfig) => {
-	return <Circle x={x} y={y} radius={radius} fill={"grey"} draggable />;
+	return (
+		<Circle
+			key={`token-${x},${y}`}
+			x={x}
+			y={y}
+			radius={radius}
+			fill={"grey"}
+			draggable
+		/>
+	);
 };
 
 export default Token;
